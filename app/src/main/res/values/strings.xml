@@ -3,4 +3,29 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="b_MC">MC</string>
+    <string name="b_MR">MR</string>
+    <string name="b_Madd">M+</string>
+    <string name="b_Msub">M-</string>
+    <string name="b_Back">&lt;-</string>
+    <string name="b_CE">CE</string>
+    <string name="b_C">C</string>
+    <string name="b_Sign">+/-</string>
+    <string name="b_9">9</string>
+    <string name="b_8">8</string>
+    <string name="b_7">7</string>
+    <string name="b_6">6</string>
+    <string name="b_5">5</string>
+    <string name="b_4">4</string>
+    <string name="b_3">3</string>
+    <string name="b_2">2</string>
+    <string name="b_1">1</string>
+    <string name="b_0">0</string>
+    <string name="b_Div">/</string>
+    <string name="b_Mul">*</string>
+    <string name="b_Sub">-</string>
+    <string name="b_Add">+</string>
+    <string name="b_Dec">.</string>
+    <string name="b_Equal">=</string>
+
 </resources>
