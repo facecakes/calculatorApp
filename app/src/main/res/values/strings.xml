@@ -27,5 +27,6 @@
     <string name="b_Add">+</string>
     <string name="b_Dec">.</string>
     <string name="b_Equal">=</string>
+    <string name="input_default">0</string>
 
 </resources>
