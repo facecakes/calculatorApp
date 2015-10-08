@@ -15,12 +15,16 @@ public class MainActivity extends AppCompatActivity {
 
     TextView calc_input, mem_buffer, calc_history;
     String default_input = "0";
+    Double answer, operand;
 
     private Toast msg;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        answer = 0.0;
+        operand = 0.0;
 
         showButtonPress(findViewById(R.id.b_0));
         showButtonPress(findViewById(R.id.b_1));
@@ -48,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
         showButtonPress(findViewById(R.id.b_Sign));
 
         calc_input = (TextView) findViewById(R.id.calc_input);
+        mem_buffer = (TextView) findViewById(R.id.mem_buffer);
+        calc_history = (TextView) findViewById(R.id.calc_history);
     }
     private View.OnClickListener buttonListener = new View.OnClickListener() {
         @Override
@@ -89,12 +95,25 @@ public class MainActivity extends AppCompatActivity {
                     inputHandler(b, c, a);
                     break;
                 case R.id.b_Div:
+                    historyHandler(c, '/');
                     break;
                 case R.id.b_Sub:
+                    historyHandler(c, '-');
+                    operand = Double.parseDouble(c);
+                    answer = answer - operand;
+                    calc_input.setText(default_input);
                     break;
                 case R.id.b_Add:
+                    historyHandler(c, '+');
+                    operand = Double.parseDouble(c);
+                    answer = answer + operand;
+                    calc_input.setText(default_input);
                     break;
                 case R.id.b_Mul:
+                    historyHandler(c, '*');
+                    operand = Double.parseDouble(c);
+                    answer = answer * operand;
+                    calc_input.setText(default_input);
                     break;
                 case R.id.b_Madd:
                     break;
@@ -114,9 +133,38 @@ public class MainActivity extends AppCompatActivity {
                     }
                     break;
                 case R.id.b_Equal:
+                    String h = calc_history.toString();
+                    //calc_history.setText(h + c);
+                    String operand_check = h.substring(h.length() - 1);
+                    switch (operand_check) {
+                        case "+":
+                            answer = answer + Double.parseDouble(c);
+                            break;
+                        case "-":
+                            answer = answer - Double.parseDouble(c);
+                            break;
+                        case "*":
+                            answer = answer * Double.parseDouble(c);
+                            break;
+                        case "/":
+                            if(Double.parseDouble(c) == 0.0)
+                            {
+                                calc_input.setText("Undefined");
+                            } else {
+                                answer = answer / Double.parseDouble(c);
+                            }
+                            break;
+                        default:
+                            break;
+                }
+                    String s = answer.toString();
+                    s = s.indexOf(".") < 0 ? s : s.replaceAll("0*$", "").replaceAll("\\.$", "");
+                    calc_input.setText(s);
                     break;
                 case R.id.b_Back:
-                    if(c.length() == 1) {
+                    if(c.length() == 2 && c.indexOf('-') >= 0) {
+                        calc_input.setText(default_input);
+                    } else if(c.length() == 1) {
                         calc_input.setText(default_input);
                         break;
                     } else {
@@ -127,6 +175,10 @@ public class MainActivity extends AppCompatActivity {
                     }
                     break;
                 case R.id.b_C:
+                    calc_input.setText(default_input);
+                    calc_history.setText("");
+                    answer = 0.0;
+                    operand = 0.0;
                     break;
                 case R.id.b_CE:
                     calc_input.setText(default_input);
@@ -143,6 +195,24 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
+
+    public void historyHandler (String input, Character operator) {
+        String initial = calc_history.getText().toString();
+        String complete = "";
+        if(initial.length() > 30) {
+            complete += initial.substring(input.length() + 3);
+        } else {
+            complete += initial;
+        }
+        if(input.indexOf('-') >= 0){
+            complete += '('+input+')';
+            complete += operator;
+        } else {
+            complete += input;
+            complete += operator;
+        }
+        calc_history.setText(complete);
+    }
 
     public void inputHandler (Button b, String current_input, String added_input){
         if(current_input.equals(default_input)) {

@@ -14,7 +14,6 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text=""
             android:id="@+id/calc_history"
             android:editable="false"
             android:gravity="center|right"
@@ -22,7 +21,8 @@
             android:lines="1"
             android:textSize="20sp"
             android:background="#1e0418a6"
-            android:autoText="false" />
+            android:autoText="false"
+            android:maxLength="32" />
     </LinearLayout>
 
     <LinearLayout
