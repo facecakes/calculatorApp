@@ -16,7 +16,7 @@ public class MainActivity extends AppCompatActivity {
     TextView calc_input, mem_buffer, calc_history;
     String default_input = "0";
     Double answer, operand, subtotal, memory;
-    Boolean add, sub, mul, div;
+    Boolean add, sub, mul, div, displayreset;
 
     private Toast msg;
     @Override
@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
         sub = false;
         mul = false;
         div = false;
+        displayreset = false;
 
         showButtonPress(findViewById(R.id.b_0));
         showButtonPress(findViewById(R.id.b_1));
@@ -163,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     } else {
                         historyHandler(c, '/');
-                        calc_input.setText(default_input);
+                        displayAnswer();
                         bool_Handler(3);
                     }
                     break;
@@ -181,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     } else {
                         historyHandler(c, '-');
-                        calc_input.setText(default_input);
+                        displayAnswer();
                         bool_Handler(1);
                     }
                     break;
@@ -200,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
                     } else {
                         bool_Handler(0);
                         historyHandler(c, '+');
-                        calc_input.setText(default_input);
+                        displayAnswer();
                     }
                     break;
                 case R.id.b_Mul:
@@ -225,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
                     } else {
                         bool_Handler(2);
                         historyHandler(c, '*');
-                        calc_input.setText(default_input);
+                        displayAnswer();
                     }
                     break;
                 case R.id.b_Madd:
@@ -427,6 +428,7 @@ public class MainActivity extends AppCompatActivity {
         String s = answer.toString();
         s = s.indexOf(".") < 0 ? s : s.replaceAll("0*$", "").replaceAll("\\.$", "");
         calc_input.setText(s);
+        displayreset = true;
     }
 
     public void historyHandler (String input, Character operator) {
@@ -449,8 +451,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void inputHandler (String current_input, String added_input){
-        if(current_input.equals(default_input)) {
+        if(current_input.equals(default_input) || displayreset) {
             calc_input.setText(added_input);
+            displayreset = false;
         } else {
             if((current_input+added_input).length() > 15){
                 /* The following if is a "toast hack" to limit toast spam for input overflow.
@@ -469,6 +472,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             } else {
                 calc_input.setText(current_input + added_input);
+                displayreset = false;
             }
         }
     }
