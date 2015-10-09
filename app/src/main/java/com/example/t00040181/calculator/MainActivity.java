@@ -15,7 +15,8 @@ public class MainActivity extends AppCompatActivity {
 
     TextView calc_input, mem_buffer, calc_history;
     String default_input = "0";
-    Double answer, operand;
+    Double answer, operand, subtotal;
+    Boolean add, sub, mul, div;
 
     private Toast msg;
     @Override
@@ -25,6 +26,12 @@ public class MainActivity extends AppCompatActivity {
 
         answer = 0.0;
         operand = 0.0;
+        subtotal = 0.0;
+
+        add = false;
+        sub = false;
+        mul = false;
+        div = false;
 
         showButtonPress(findViewById(R.id.b_0));
         showButtonPress(findViewById(R.id.b_1));
@@ -55,6 +62,40 @@ public class MainActivity extends AppCompatActivity {
         mem_buffer = (TextView) findViewById(R.id.mem_buffer);
         calc_history = (TextView) findViewById(R.id.calc_history);
     }
+    public void bool_Handler (int i){
+        switch (i){
+            case 0:
+                add = true;
+                sub = false;
+                mul = false;
+                div = false;
+                break;
+            case 1:
+                sub = true;
+                add = false;
+                mul = false;
+                div = false;
+                break;
+            case 2:
+                mul = true;
+                add = false;
+                sub = false;
+                div = false;
+                break;
+            case 3:
+                div = true;
+                add = false;
+                sub = false;
+                mul = false;
+                break;
+            case -1:
+                div = false;
+                add = false;
+                sub = false;
+                mul = false;
+                break;
+        }
+    }
     private View.OnClickListener buttonListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -65,55 +106,101 @@ public class MainActivity extends AppCompatActivity {
 
             switch(b.getId()){
                 case R.id.b_0:
-                    inputHandler(b, c, a);
+                    inputHandler(c, a);
                     break;
                 case R.id.b_1:
-                    inputHandler(b, c, a);
+                    inputHandler(c, a);
                     break;
                 case R.id.b_2:
-                    inputHandler(b, c, a);
+                    inputHandler(c, a);
                     break;
                 case R.id.b_3:
-                    inputHandler(b, c, a);
+                    inputHandler(c, a);
                     break;
                 case R.id.b_4:
-                    inputHandler(b, c, a);
+                    inputHandler(c, a);
                     break;
                 case R.id.b_5:
-                    inputHandler(b, c, a);
+                    inputHandler(c, a);
                     break;
                 case R.id.b_6:
-                    inputHandler(b, c, a);
+                    inputHandler(c, a);
                     break;
                 case R.id.b_7:
-                    inputHandler(b, c, a);
+                    inputHandler(c, a);
                     break;
                 case R.id.b_8:
-                    inputHandler(b, c, a);
+                    inputHandler(c, a);
                     break;
                 case R.id.b_9:
-                    inputHandler(b, c, a);
+                    inputHandler(c, a);
                     break;
                 case R.id.b_Div:
-                    historyHandler(c, '/');
+                    try {
+                        historyHandler(c, '/');
+                        operand = Double.parseDouble(c);
+                        if(subtotal == 0.0) {
+                            answer = operand;
+                            subtotal = answer;
+                            calc_input.setText(default_input);
+                            bool_Handler(3);
+                        } else if(operand == 0.0){
+                            clearOperands();
+                            calc_input.setText("Undefined");
+                            bool_Handler(-1);
+                        } else {
+                            subtotal = operand;
+                            answer = answer / subtotal;
+                            calc_input.setText(default_input);
+                            bool_Handler(3);
+                        }
+                    } catch(NumberFormatException ex){
+                        msg = Toast.makeText(getApplicationContext(), "Invalid input.", Toast.LENGTH_SHORT);
+                        msg.show();
+                    }
                     break;
                 case R.id.b_Sub:
-                    historyHandler(c, '-');
-                    operand = Double.parseDouble(c);
-                    answer = answer - operand;
-                    calc_input.setText(default_input);
+                    try {
+                        operand = Double.parseDouble(c);
+                        historyHandler(c, '-');
+                        answer = operand - answer;
+                        calc_input.setText(default_input);
+                        bool_Handler(1);
+                    } catch(NumberFormatException ex){
+                        msg = Toast.makeText(getApplicationContext(), "Invalid input.", Toast.LENGTH_SHORT);
+                        msg.show();
+                    }
                     break;
                 case R.id.b_Add:
-                    historyHandler(c, '+');
-                    operand = Double.parseDouble(c);
-                    answer = answer + operand;
-                    calc_input.setText(default_input);
+                    try {
+                        operand = Double.parseDouble(c);
+                        historyHandler(c, '+');
+                        answer = answer + operand;
+                        calc_input.setText(default_input);
+                        bool_Handler(0);
+                    } catch(NumberFormatException ex){
+                        msg = Toast.makeText(getApplicationContext(), "Invalid input.", Toast.LENGTH_SHORT);
+                        msg.show();
+                    }
                     break;
                 case R.id.b_Mul:
-                    historyHandler(c, '*');
-                    operand = Double.parseDouble(c);
-                    answer = answer * operand;
-                    calc_input.setText(default_input);
+                    try {
+                        operand = Double.parseDouble(c);
+                        historyHandler(c, '*');
+                        subtotal = operand * answer;
+                        if (subtotal == 0.0){
+                            answer = operand;
+                            calc_input.setText(default_input);
+                            bool_Handler(2);
+                        } else {
+                            answer = answer * operand;
+                            calc_input.setText(default_input);
+                            bool_Handler(2);
+                        }
+                    } catch(NumberFormatException ex){
+                        msg = Toast.makeText(getApplicationContext(), "Invalid input.", Toast.LENGTH_SHORT);
+                        msg.show();
+                    }
                     break;
                 case R.id.b_Madd:
                     break;
@@ -133,33 +220,62 @@ public class MainActivity extends AppCompatActivity {
                     }
                     break;
                 case R.id.b_Equal:
-                    String h = calc_history.toString();
-                    //calc_history.setText(h + c);
-                    String operand_check = h.substring(h.length() - 1);
-                    switch (operand_check) {
-                        case "+":
-                            answer = answer + Double.parseDouble(c);
-                            break;
-                        case "-":
-                            answer = answer - Double.parseDouble(c);
-                            break;
-                        case "*":
-                            answer = answer * Double.parseDouble(c);
-                            break;
-                        case "/":
-                            if(Double.parseDouble(c) == 0.0)
-                            {
+                    if(add){
+                        try{
+                            operand = Double.parseDouble(c);
+                            answer = answer + operand;
+                            updateHistory();
+                            displayAnswer();
+                            clearOperands();
+                            bool_Handler(-1);
+                        } catch(NumberFormatException ex){
+                            msg = Toast.makeText(getApplicationContext(), "Invalid input.", Toast.LENGTH_SHORT);
+                            msg.show();
+                        }
+                    } else if(sub) {
+                        try {
+                            operand = Double.parseDouble(c);
+                            answer = answer - operand;
+                            updateHistory();
+                            displayAnswer();
+                            clearOperands();
+                            bool_Handler(-1);
+                        } catch(NumberFormatException ex){
+                            msg = Toast.makeText(getApplicationContext(), "Invalid input.", Toast.LENGTH_SHORT);
+                            msg.show();
+                        }
+                    } else if(mul) {
+                        try {
+                            operand = Double.parseDouble(c);
+                            answer = answer * operand;
+                            updateHistory();
+                            displayAnswer();
+                            clearOperands();
+                            bool_Handler(-1);
+                        } catch(NumberFormatException ex){
+                            msg = Toast.makeText(getApplicationContext(), "Invalid input.", Toast.LENGTH_SHORT);
+                            msg.show();
+                        }
+                    } else if(div) {
+                        try {
+                            double zero_check = Double.parseDouble(c);
+                            if(zero_check == 0.0){
+                                updateHistory();
                                 calc_input.setText("Undefined");
+                                clearOperands();
+                                bool_Handler(-1);
                             } else {
-                                answer = answer / Double.parseDouble(c);
+                                answer = answer / zero_check;
+                                updateHistory();
+                                displayAnswer();
+                                clearOperands();
+                                bool_Handler(-1);
                             }
-                            break;
-                        default:
-                            break;
-                }
-                    String s = answer.toString();
-                    s = s.indexOf(".") < 0 ? s : s.replaceAll("0*$", "").replaceAll("\\.$", "");
-                    calc_input.setText(s);
+                        } catch(NumberFormatException ex){
+                            msg = Toast.makeText(getApplicationContext(), "Invalid input.", Toast.LENGTH_SHORT);
+                            msg.show();
+                        }
+                    }
                     break;
                 case R.id.b_Back:
                     if(c.length() == 2 && c.indexOf('-') >= 0) {
@@ -177,8 +293,7 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.b_C:
                     calc_input.setText(default_input);
                     calc_history.setText("");
-                    answer = 0.0;
-                    operand = 0.0;
+                    clearOperands();
                     break;
                 case R.id.b_CE:
                     calc_input.setText(default_input);
@@ -196,7 +311,34 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    public void clearOperands(){
+        answer = 0.0;
+        operand = 0.0;
+        subtotal = 0.0;
+    }
+
+    public void updateHistory() {
+        String f = calc_history.getText().toString();
+        String g = calc_input.getText().toString();
+        String display = "";
+        if(g.indexOf('-') >= 0){
+            display = f+'('+g+')';
+        } else {
+            display = f+g;
+        }
+        calc_history.setText(display);
+    }
+    public void displayAnswer() {
+        String s = answer.toString();
+        s = s.indexOf(".") < 0 ? s : s.replaceAll("0*$", "").replaceAll("\\.$", "");
+        calc_input.setText(s);
+    }
+
     public void historyHandler (String input, Character operator) {
+        if(!add && !sub && !mul && !div){
+            calc_history.setText("");
+        }
+
         String initial = calc_history.getText().toString();
         String complete = "";
         if(initial.length() > 30) {
@@ -214,7 +356,7 @@ public class MainActivity extends AppCompatActivity {
         calc_history.setText(complete);
     }
 
-    public void inputHandler (Button b, String current_input, String added_input){
+    public void inputHandler (String current_input, String added_input){
         if(current_input.equals(default_input)) {
             calc_input.setText(added_input);
         } else {
