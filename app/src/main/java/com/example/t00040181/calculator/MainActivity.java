@@ -136,70 +136,94 @@ public class MainActivity extends AppCompatActivity {
                     inputHandler(c, a);
                     break;
                 case R.id.b_Div:
-                    try {
-                        historyHandler(c, '/');
-                        operand = Double.parseDouble(c);
-                        if(subtotal == 0.0) {
-                            answer = operand;
-                            subtotal = answer;
-                            calc_input.setText(default_input);
-                            bool_Handler(3);
-                        } else if(operand == 0.0){
-                            clearOperands();
-                            calc_input.setText("Undefined");
-                            bool_Handler(-1);
-                        } else {
-                            subtotal = operand;
-                            answer = answer / subtotal;
-                            calc_input.setText(default_input);
-                            bool_Handler(3);
+                    if(!checkPreviousCalc()) {
+                        try {
+                            historyHandler(c, '/');
+                            operand = Double.parseDouble(c);
+                            if (subtotal == 0.0) {
+                                answer = operand;
+                                subtotal = answer;
+                                calc_input.setText(default_input);
+                                bool_Handler(3);
+                            } else if (operand == 0.0) {
+                                clearOperands();
+                                calc_input.setText("Undefined");
+                                bool_Handler(-1);
+                            } else {
+                                subtotal = operand;
+                                answer = answer / subtotal;
+                                calc_input.setText(default_input);
+                                bool_Handler(3);
+                            }
+                        } catch (NumberFormatException ex) {
+                            msg = Toast.makeText(getApplicationContext(), "Invalid input.", Toast.LENGTH_SHORT);
+                            msg.show();
                         }
-                    } catch(NumberFormatException ex){
-                        msg = Toast.makeText(getApplicationContext(), "Invalid input.", Toast.LENGTH_SHORT);
-                        msg.show();
+                    } else {
+                        historyHandler(c, '/');
+                        calc_input.setText(default_input);
+                        bool_Handler(3);
                     }
                     break;
                 case R.id.b_Sub:
-                    try {
-                        operand = Double.parseDouble(c);
+                    if(!checkPreviousCalc()) {
+                        try {
+                            operand = Double.parseDouble(c);
+                            historyHandler(c, '-');
+                            answer = operand - answer;
+                            calc_input.setText(default_input);
+                            bool_Handler(1);
+                        } catch (NumberFormatException ex) {
+                            msg = Toast.makeText(getApplicationContext(), "Invalid input.", Toast.LENGTH_SHORT);
+                            msg.show();
+                        }
+                    } else {
                         historyHandler(c, '-');
-                        answer = operand - answer;
                         calc_input.setText(default_input);
                         bool_Handler(1);
-                    } catch(NumberFormatException ex){
-                        msg = Toast.makeText(getApplicationContext(), "Invalid input.", Toast.LENGTH_SHORT);
-                        msg.show();
                     }
                     break;
                 case R.id.b_Add:
-                    try {
-                        operand = Double.parseDouble(c);
-                        historyHandler(c, '+');
-                        answer = answer + operand;
-                        calc_input.setText(default_input);
+                    if(!checkPreviousCalc()) {
+                        try {
+                            operand = Double.parseDouble(c);
+                            historyHandler(c, '+');
+                            answer = answer + operand;
+                            calc_input.setText(default_input);
+                            bool_Handler(0);
+                        } catch (NumberFormatException ex) {
+                            msg = Toast.makeText(getApplicationContext(), "Invalid input.", Toast.LENGTH_SHORT);
+                            msg.show();
+                        }
+                    } else {
                         bool_Handler(0);
-                    } catch(NumberFormatException ex){
-                        msg = Toast.makeText(getApplicationContext(), "Invalid input.", Toast.LENGTH_SHORT);
-                        msg.show();
+                        historyHandler(c, '+');
+                        calc_input.setText(default_input);
                     }
                     break;
                 case R.id.b_Mul:
-                    try {
-                        operand = Double.parseDouble(c);
-                        historyHandler(c, '*');
-                        subtotal = operand * answer;
-                        if (subtotal == 0.0){
-                            answer = operand;
-                            calc_input.setText(default_input);
-                            bool_Handler(2);
-                        } else {
-                            answer = answer * operand;
-                            calc_input.setText(default_input);
-                            bool_Handler(2);
+                    if(!checkPreviousCalc()) {
+                        try {
+                            operand = Double.parseDouble(c);
+                            historyHandler(c, '*');
+                            subtotal = operand * answer;
+                            if (subtotal == 0.0) {
+                                answer = operand;
+                                calc_input.setText(default_input);
+                                bool_Handler(2);
+                            } else {
+                                answer = answer * operand;
+                                calc_input.setText(default_input);
+                                bool_Handler(2);
+                            }
+                        } catch (NumberFormatException ex) {
+                            msg = Toast.makeText(getApplicationContext(), "Invalid input.", Toast.LENGTH_SHORT);
+                            msg.show();
                         }
-                    } catch(NumberFormatException ex){
-                        msg = Toast.makeText(getApplicationContext(), "Invalid input.", Toast.LENGTH_SHORT);
-                        msg.show();
+                    } else {
+                        bool_Handler(2);
+                        historyHandler(c, '*');
+                        calc_input.setText(default_input);
                     }
                     break;
                 case R.id.b_Madd:
@@ -220,62 +244,66 @@ public class MainActivity extends AppCompatActivity {
                     }
                     break;
                 case R.id.b_Equal:
-                    if(add){
-                        try{
-                            operand = Double.parseDouble(c);
-                            answer = answer + operand;
-                            updateHistory();
-                            displayAnswer();
-                            clearOperands();
-                            bool_Handler(-1);
-                        } catch(NumberFormatException ex){
-                            msg = Toast.makeText(getApplicationContext(), "Invalid input.", Toast.LENGTH_SHORT);
-                            msg.show();
-                        }
-                    } else if(sub) {
-                        try {
-                            operand = Double.parseDouble(c);
-                            answer = answer - operand;
-                            updateHistory();
-                            displayAnswer();
-                            clearOperands();
-                            bool_Handler(-1);
-                        } catch(NumberFormatException ex){
-                            msg = Toast.makeText(getApplicationContext(), "Invalid input.", Toast.LENGTH_SHORT);
-                            msg.show();
-                        }
-                    } else if(mul) {
-                        try {
-                            operand = Double.parseDouble(c);
-                            answer = answer * operand;
-                            updateHistory();
-                            displayAnswer();
-                            clearOperands();
-                            bool_Handler(-1);
-                        } catch(NumberFormatException ex){
-                            msg = Toast.makeText(getApplicationContext(), "Invalid input.", Toast.LENGTH_SHORT);
-                            msg.show();
-                        }
-                    } else if(div) {
-                        try {
-                            double zero_check = Double.parseDouble(c);
-                            if(zero_check == 0.0){
-                                updateHistory();
-                                calc_input.setText("Undefined");
-                                clearOperands();
-                                bool_Handler(-1);
-                            } else {
-                                answer = answer / zero_check;
+                        if (add) {
+                            try {
+                                operand = Double.parseDouble(c);
+                                answer = answer + operand;
                                 updateHistory();
                                 displayAnswer();
                                 clearOperands();
                                 bool_Handler(-1);
+                            } catch (NumberFormatException ex) {
+                                msg = Toast.makeText(getApplicationContext(), "Invalid input.", Toast.LENGTH_SHORT);
+                                msg.show();
                             }
-                        } catch(NumberFormatException ex){
-                            msg = Toast.makeText(getApplicationContext(), "Invalid input.", Toast.LENGTH_SHORT);
-                            msg.show();
+                        } else if (sub) {
+                            try {
+                                operand = Double.parseDouble(c);
+                                answer = answer - operand;
+                                updateHistory();
+                                displayAnswer();
+                                clearOperands();
+                                bool_Handler(-1);
+                            } catch (NumberFormatException ex) {
+                                msg = Toast.makeText(getApplicationContext(), "Invalid input.", Toast.LENGTH_SHORT);
+                                msg.show();
+                            }
+                        } else if (mul) {
+                            try {
+                                operand = Double.parseDouble(c);
+                                answer = answer * operand;
+                                updateHistory();
+                                displayAnswer();
+                                clearOperands();
+                                bool_Handler(-1);
+                            } catch (NumberFormatException ex) {
+                                msg = Toast.makeText(getApplicationContext(), "Invalid input.", Toast.LENGTH_SHORT);
+                                msg.show();
+                            }
+                        } else if (div) {
+                            try {
+                                double zero_check = Double.parseDouble(c);
+                                if (zero_check == 0.0) {
+                                    updateHistory();
+                                    calc_input.setText("Undefined");
+                                    clearOperands();
+                                    bool_Handler(-1);
+                                } else {
+                                    answer = answer / zero_check;
+                                    updateHistory();
+                                    displayAnswer();
+                                    clearOperands();
+                                    bool_Handler(-1);
+                                }
+                            } catch (NumberFormatException ex) {
+                                msg = Toast.makeText(getApplicationContext(), "Invalid input.", Toast.LENGTH_SHORT);
+                                msg.show();
+                            }
+                        } else {
+                            calc_input.setText(default_input);
+                            calc_history.setText("");
+                            clearOperands();
                         }
-                    }
                     break;
                 case R.id.b_Back:
                     if(c.length() == 2 && c.indexOf('-') >= 0) {
@@ -311,6 +339,43 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    public boolean checkPreviousCalc(){
+        String c = calc_input.getText().toString();
+        double i;
+        try{
+            i = Double.parseDouble(c);
+            if(add){
+                answer = answer + i;
+                bool_Handler(-1);
+                return true;
+            } else if(sub){
+                answer = answer - i;
+                bool_Handler(-1);
+                return true;
+            } else if(mul){
+                answer = answer * i;
+                bool_Handler(-1);
+                return true;
+            } else if(div) {
+                if (i == 0.0) {
+                    calc_input.setText("Undefined");
+                    clearOperands();
+                    bool_Handler(-1);
+                } else {
+                    answer = answer / i;
+                    bool_Handler(-1);
+                    return true;
+                }
+            } else {
+                calc_history.setText("");
+                return false;
+            }
+        } catch(NumberFormatException ex){
+            msg = Toast.makeText(getApplicationContext(), "Invalid input.", Toast.LENGTH_SHORT);
+            msg.show();
+        }
+        return false;
+    }
     public void clearOperands(){
         answer = 0.0;
         operand = 0.0;
@@ -335,9 +400,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void historyHandler (String input, Character operator) {
-        if(!add && !sub && !mul && !div){
-            calc_history.setText("");
-        }
 
         String initial = calc_history.getText().toString();
         String complete = "";
