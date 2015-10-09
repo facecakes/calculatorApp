@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
         div = false;
         displayreset = false;
 
+
         showButtonPress(findViewById(R.id.b_0));
         showButtonPress(findViewById(R.id.b_1));
         showButtonPress(findViewById(R.id.b_2));
