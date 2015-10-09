@@ -15,7 +15,7 @@ public class MainActivity extends AppCompatActivity {
 
     TextView calc_input, mem_buffer, calc_history;
     String default_input = "0";
-    Double answer, operand, subtotal;
+    Double answer, operand, subtotal, memory;
     Boolean add, sub, mul, div;
 
     private Toast msg;
@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
         answer = 0.0;
         operand = 0.0;
         subtotal = 0.0;
+        memory = 0.0;
 
         add = false;
         sub = false;
@@ -55,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
         showButtonPress(findViewById(R.id.b_Madd));
         showButtonPress(findViewById(R.id.b_Msub));
         showButtonPress(findViewById(R.id.b_MR));
+        showButtonPress(findViewById(R.id.b_Msave));
         showButtonPress(findViewById(R.id.b_Back));
         showButtonPress(findViewById(R.id.b_Sign));
 
@@ -227,12 +229,40 @@ public class MainActivity extends AppCompatActivity {
                     }
                     break;
                 case R.id.b_Madd:
+                    try {
+                        double temp = Double.parseDouble(c);
+                        memory = memory + temp;
+                        mem_buffer.setText(memory.toString());
+                    } catch(NumberFormatException ex){
+                        msg = Toast.makeText(getApplicationContext(), "Invalid input.", Toast.LENGTH_SHORT);
+                        msg.show();
+                    }
                     break;
                 case R.id.b_Msub:
+                    try {
+                        double temp = Double.parseDouble(c);
+                        memory = memory - temp;
+                        mem_buffer.setText(memory.toString());
+                    } catch(NumberFormatException ex){
+                        msg = Toast.makeText(getApplicationContext(), "Invalid input.", Toast.LENGTH_SHORT);
+                        msg.show();
+                    }
                     break;
                 case R.id.b_MC:
+                    memory = 0.0;
+                    mem_buffer.setText("");
                     break;
                 case R.id.b_MR:
+                    calc_input.setText(memory.toString());
+                    break;
+                case R.id.b_Msave:
+                    try {
+                        memory = Double.parseDouble(c);
+                        mem_buffer.setText(memory.toString());
+                    } catch(NumberFormatException ex){
+                        msg = Toast.makeText(getApplicationContext(), "Invalid input.", Toast.LENGTH_SHORT);
+                        msg.show();
+                    }
                     break;
                 case R.id.b_Dec:
                     if(c.indexOf('.') >= 0){

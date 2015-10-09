@@ -109,6 +109,16 @@
                 android:background="#ffdd4f"
                 android:layout_weight="1"
                 android:textSize="20sp" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="@string/b_Msave"
+                android:id="@+id/b_Msave"
+                android:layout_weight="1"
+                android:background="#ffdd4f"
+                android:textColor="#ff0000"
+                android:textSize="20sp" />
         </TableRow>
 
         <TableRow
